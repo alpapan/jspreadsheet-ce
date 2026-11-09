@@ -1550,6 +1550,13 @@ declare namespace jspreadsheet {
         executeFormula: (expression: string, x?: number, y?: number) => any;
 
         /**
+         * Records that the formula cell named `dependant` reads the cell named `reference`, so that a change to `reference` re-evaluates `dependant`. A cell is never recorded as its own dependant.
+         * @param reference - Name of the cell that is read, such as "B2".
+         * @param dependant - Name of the formula cell that reads it, such as "C1".
+         */
+        addFormulaDependant: (reference: string, dependant: string) => void;
+
+        /**
          * Table row containing filter inputs.
          */
         filter: null | HTMLTableRowElement;

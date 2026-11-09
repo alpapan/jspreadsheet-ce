@@ -122,6 +122,25 @@ export const setFormula = function (fn) {
 };
 
 /**
+ * Records that the formula cell named dependant reads the cell named
+ * reference, so that a change to reference re-evaluates dependant. A cell is
+ * never recorded as its own dependant.
+ */
+export const addFormulaDependant = function (reference, dependant) {
+    const obj = this;
+
+    if (reference === dependant) {
+        return;
+    }
+    if (!obj.formula[reference]) {
+        obj.formula[reference] = [];
+    }
+    if (obj.formula[reference].indexOf(dependant) < 0) {
+        obj.formula[reference].push(dependant);
+    }
+};
+
+/**
  * Parse formulas
  */
 export const executeFormula = function (expression, x, y) {
@@ -205,13 +224,7 @@ export const executeFormula = function (expression, x, y) {
             if (tokens) {
                 for (let i = 0; i < tokens.length; i++) {
                     // Keep chain
-                    if (!obj.formula[tokens[i]]) {
-                        obj.formula[tokens[i]] = [];
-                    }
-                    // Is already in the register
-                    if (obj.formula[tokens[i]].indexOf(parentId) < 0) {
-                        obj.formula[tokens[i]].push(parentId);
-                    }
+                    addFormulaDependant.call(obj, tokens[i], parentId);
 
                     // Do not calculate again
                     if (typeof globalThis[tokens[i]] === 'undefined') {

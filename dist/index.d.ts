@@ -2359,6 +2359,17 @@ declare namespace jspreadsheet {
          */
         setDictionary: (o: Record<string, string>) => void;
 
+        /**
+         * Registers the formula engine. The library ships with none: every
+         * formula cell shows #ERROR until one is registered.
+         * @param fn - Called for each formula cell with the formula text (no
+         * leading "="), the values of the cells it references, the cell's
+         * column and row, and the worksheet; returns what the cell shows.
+         */
+        setFormula: (
+            fn: (expression: string, variables: Record<string, unknown>, x: number, y: number, worksheet: WorksheetInstance) => unknown
+        ) => void;
+
         spreadsheet: SpreadsheetInstance[];
 
         /**

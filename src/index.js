@@ -8,6 +8,7 @@ import { destroyEvents } from './utils/events.js';
 import * as helpers from './utils/helpers.js';
 import dispatch from './utils/dispatch.js';
 import version from './utils/version.js';
+import { setFormula } from './utils/internal.js';
 
 libraryBase.jspreadsheet = function (el, options) {
     try {
@@ -52,6 +53,11 @@ libraryBase.jspreadsheet.getWorksheetInstanceByName = function (worksheetName, n
 // Define dictionary
 libraryBase.jspreadsheet.setDictionary = function (o) {
     jSuites.setDictionary(o);
+};
+
+// Define the formula engine
+libraryBase.jspreadsheet.setFormula = function (fn) {
+    setFormula(fn);
 };
 
 libraryBase.jspreadsheet.destroy = function (element, destroyEventHandlers) {

@@ -25,25 +25,38 @@ describe('Calculations', () => {
         expect(test[0].getValue('B5', true)).to.equal('5');
     });
 
-    it('Keeps special characters inside string literals', () => {
-        let test = jspreadsheet(root, {
-            worksheets: [
-                {
-                    data: [
-                        ['="Total: $"&"100"', '="Smith & Co"', '="A1 <> $B$2 ^ 2!"', '="Say ""hi"" & bye"'],
-                        ['10', '="Value: $"&A2', '=B1&" "&A2', '="a=b"&"!"'],
-                    ],
-                },
-            ],
+    it('Keeps string literals untouched in the formula text the engine receives', () => {
+        const seen = {};
+        jspreadsheet.setFormula(function (expression, variables, x, y) {
+            seen[x + ',' + y] = expression;
+            return 'ok';
         });
 
-        expect(test[0].getValue('A1', true)).to.equal('Total: $100');
-        expect(test[0].getValue('B1', true)).to.equal('Smith &amp; Co');
-        expect(test[0].getValue('C1', true)).to.equal('A1 &lt;&gt; $B$2 ^ 2!');
-        expect(test[0].getValue('D1', true)).to.equal('Say "hi" &amp; bye');
-        expect(test[0].getValue('B2', true)).to.equal('Value: $10');
-        expect(test[0].getValue('C2', true)).to.equal('Smith &amp; Co 10');
-        expect(test[0].getValue('D2', true)).to.equal('a=b!');
+        try {
+            jspreadsheet(root, {
+                worksheets: [
+                    {
+                        data: [
+                            ['="Total: $"&"100"', '="Smith & Co"', '="A1 <> $B$2 ^ 2!"', '="Say ""hi"" & bye"'],
+                            ['10', '="Value: $"&A2', '=B1&" "&A2', '="a=b"&"!"'],
+                        ],
+                    },
+                ],
+            });
+        } finally {
+            // The other tests run with @jspreadsheet/formula registered (mocha.config.js).
+            jspreadsheet.setFormula(require('@jspreadsheet/formula'));
+        }
+
+        expect(seen).to.deep.equal({
+            '0,0': '"Total: $"&"100"',
+            '1,0': '"Smith & Co"',
+            '2,0': '"A1 <> $B$2 ^ 2!"',
+            '3,0': '"Say ""hi"" & bye"',
+            '1,1': '"Value: $"&A2',
+            '2,1': 'B1&" "&A2',
+            '3,1': '"a=b"&"!"',
+        });
     });
 
     describe('Test updating formulas when adding new rows', () => {

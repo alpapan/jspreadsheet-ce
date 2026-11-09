@@ -1,5 +1,4 @@
 import jSuites from 'jsuites';
-import formula from '@jspreadsheet/formula';
 
 import dispatch from './dispatch.js';
 import { refreshSelection, updateCornerPosition } from './selection.js';
@@ -103,6 +102,23 @@ const parseNumber = function (value, columnNumber) {
     }
 
     return value;
+};
+
+/**
+ * The engine every formula cell is evaluated with. The library ships with
+ * none, so that it never evaluates a string as code; the host registers one
+ * with jspreadsheet.setFormula(fn).
+ */
+let formula = function () {
+    console.error('jspreadsheet-ce: no formula engine is registered; call jspreadsheet.setFormula(fn) before creating a worksheet');
+    return '#ERROR';
+};
+
+/**
+ * Registers the formula engine.
+ */
+export const setFormula = function (fn) {
+    formula = fn;
 };
 
 /**

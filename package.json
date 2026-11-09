@@ -48,7 +48,6 @@
         "datasheet"
     ],
     "dependencies": {
-        "@jspreadsheet/formula": "^2.0.2",
         "jsuites": "^5.12.0"
     },
     "devDependencies": {
@@ -57,6 +56,7 @@
         "@babel/preset-env": "^7.7.4",
         "@babel/register": "^7.7.4",
         "@eslint/js": "^9.34.0",
+        "@jspreadsheet/formula": "^2.0.2",
         "c8": "^7.13.0",
         "chai": "^4.3.7",
         "copy-webpack-plugin": "^11.0.0",
